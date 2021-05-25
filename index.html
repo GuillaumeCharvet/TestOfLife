@@ -1,0 +1,40 @@
+<!doctype html> 
+<html lang="fr"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Test of Life</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.54.0/dist/phaser.js"></script>
+    <script src="scene1.js"></script>
+    <script src="scene2.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var config = {
+    type: Phaser.AUTO,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 15000 },
+            debug: true
+        }
+    },
+    input:{gamepad:true},
+    parent: 'phaser-example',
+    width: num_c * size_c,
+    height: num_l * size_l,
+    scene: [scene1, scene2]
+};
+
+var game = new Phaser.Game(config);
+
+</script>
+
+</body>
+</html>
