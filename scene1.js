@@ -1,14 +1,17 @@
 var map = [];
 var map_aux = [];
 
-const num_l = 350;
-const num_c = 400;
-const size_l = 16;
-const size_c = 16;
+const num_l = 120;
+const num_c = 200;
+const size_l = 8;
+const size_c = 8;
 
 const lim_display_grid = 12;
 
 var graphics;
+var scoreText;
+var reserveText;
+var reserveText2;
 
 var cursors;
 
@@ -20,9 +23,18 @@ var pause_possible = false;
 var color = 1;
 var switch_color_possible = false;
 var size_radius = 2;
+var reserve_mouse = 120;
+var reserve_mouse2 = 5;
 
+var mouse_possible = false;
 var radius_up_possible = false;
 var radius_down_possible = false;
+
+var random_start = true;
+var compteur_cases_non_vides;
+
+var scoreMax = 0;
+var nb_tour_var_max = 50;
 
 class scene1 extends Phaser.Scene{
     
@@ -40,7 +52,25 @@ class scene1 extends Phaser.Scene{
     {
         graphics = this.add.graphics();
         
-        cursors = this.input.keyboard.addKeys({ 'pause': Phaser.Input.Keyboard.KeyCodes.SPACE, 'switch_color': Phaser.Input.Keyboard.KeyCodes.C, 'radius_up': Phaser.Input.Keyboard.KeyCodes.P, 'radius_down': Phaser.Input.Keyboard.KeyCodes.M});
+        scoreText = this.add.text(16, 16,"", {
+            fontSize: '18px',
+            padding: { x: 10, y: 5 },
+            fill: '#000000'
+        });
+        
+        reserveText= this.add.text(config.width - 330, 16,"reserve longueur clic = "+reserve_mouse, {
+            fontSize: '18px',
+            padding: { x: 10, y: 5 },
+            fill: '#000000'
+        });
+        
+        reserveText2= this.add.text(config.width - 330, 36,"reserve nombre clic = "+reserve_mouse2, {
+            fontSize: '18px',
+            padding: { x: 10, y: 5 },
+            fill: '#000000'
+        });
+        
+        cursors = this.input.keyboard.addKeys({ 'pause': Phaser.Input.Keyboard.KeyCodes.SPACE, 'switch_color': Phaser.Input.Keyboard.KeyCodes.C, 'radius_up': Phaser.Input.Keyboard.KeyCodes.P, 'radius_down': Phaser.Input.Keyboard.KeyCodes.M, 'trait_droit': Phaser.Input.Keyboard.KeyCodes.ALT});
         
         for (let i = 0; i < num_l; i++)
         {
@@ -53,6 +83,42 @@ class scene1 extends Phaser.Scene{
             }
         }
         
+        if (random_start)
+        {
+            var nb_trait = 7+Math.floor(7*Math.random());
+            for (let n = 0; n < nb_trait; n++)
+            {
+                var x_start = Math.floor(config.width*Math.random());
+                var y_start = Math.floor(config.height*Math.random());
+                var theta = 2*Math.PI*Math.random();
+                var length_trait = 3+Math.floor(28*Math.random());
+                for (let p = 0; p < length_trait; p++)
+                {
+                    var i = Math.floor(y_start/size_l);
+                    var j = Math.floor(x_start/size_c);
+                    for (let k = -size_radius; k <= size_radius; k++)
+                    {
+                        for (let l = -size_radius; l <= size_radius; l++)
+                        {
+                            if (Math.pow(Math.pow(k,2)+Math.pow(l,2),0.5) <= size_radius && 0<=i+k && i+k<num_l && 0<=j+l && j+l<num_c)
+                            {
+                                map[i+k][j+l] = color;
+                                map_aux[i+k][j+l]  = color;
+                                draw(color,(j+l)*size_c,(i+k)*size_l,size_c,size_l);
+                            }
+                        }
+                    }
+                    var d = 2+Math.floor((6*size_radius+1)*Math.random());
+                    x_start += d*Math.cos(theta);
+                    y_start += d*Math.sin(theta);
+                    theta += 2*Math.PI/8*Math.random()-Math.PI/8;
+                    if(p%3==0){size_radius = Math.min(Math.max(size_radius + Math.floor(3*Math.random())-1,0),5);}
+                    /*x_start = Math.min(Math.max(x_start-2*size_radius+Math.floor((4*size_radius+1)*Math.random()),0),config.width);
+                    y_start = Math.min(Math.max(y_start-2*size_radius+Math.floor((4*size_radius+1)*Math.random()),0),config.height);*/
+                }
+            }
+        }
+        
         for (let i = 0; i < num_l; i++)
         {
             for (let j = 0; j < num_c; j++)
@@ -61,6 +127,7 @@ class scene1 extends Phaser.Scene{
                 draw(map[i][j],j*size_c,i*size_l,size_c,size_l);
             }
         }
+        size_radius = 2;        
     }
     
     update ()
@@ -81,12 +148,12 @@ class scene1 extends Phaser.Scene{
         }
         if (cursors.switch_color.isDown){switch_color_possible = true;}
         
-        if (cursors.radius_up.isUp && radius_up_possible)
+        /*if (cursors.radius_up.isUp && radius_up_possible)
         {
             size_radius++;
             radius_up_possible = false;
         }
-        if (cursors.radius_up.isDown){radius_up_possible = true;}
+        if (cursors.radius_up.isDown){radius_up_possible = true;}*/
         
         if (cursors.radius_down.isUp && radius_down_possible)
         {
@@ -95,7 +162,7 @@ class scene1 extends Phaser.Scene{
         }
         if (cursors.radius_down.isDown){radius_down_possible = true;}
         
-        if (this.input.activePointer.isDown && 0<game.input.mousePointer.y<config.height && 0<game.input.mousePointer.x<config.width)
+        if (this.input.activePointer.isDown && 0<game.input.mousePointer.y<config.height && 0<game.input.mousePointer.x<config.width && reserve_mouse>0 && reserve_mouse2>0)
         {
             var i = Math.floor(game.input.mousePointer.y/size_l);
             var j = Math.floor(game.input.mousePointer.x/size_c);
@@ -108,12 +175,19 @@ class scene1 extends Phaser.Scene{
                         map[i+k][j+l] = color;
                         map_aux[i+k][j+l]  = color;
                         draw(color,(j+l)*size_c,(i+k)*size_l,size_c,size_l);
-                        /*if (color == 0){graphics.fillStyle(0xffff00, 1);}else{graphics.fillStyle(0xff00ff, 1);}
-                        if (size_c < lim_display_grid){graphics.fillRect((j+l)*size_c,(i+k)*size_l,size_c,size_l);}
-                        else {graphics.fillRect((j+l)*size_c+1,(i+k)*size_l+1,size_c-2,size_l-2);}*/
                     }
                 }
             }
+            reserve_mouse--;
+            reserveText.setText("reserve longueur clic = "+reserve_mouse);
+            mouse_possible =true;
+        }
+        
+        if (mouse_possible && !this.input.activePointer.isDown)
+        {
+            reserve_mouse2--;
+            reserveText2.setText("reserve nombre clic = "+reserve_mouse2);
+            mouse_possible = false;
         }
         
         if (!pause)
@@ -124,7 +198,6 @@ class scene1 extends Phaser.Scene{
                 {
                     for (let j = 0; j < num_c; j++)
                     {
-                        //console.log("i =",i,"j =",j,"map[i][j] =",map[i][j]);
                         /*
                         var compteur = 0;
                         for (let k = -1; k < 2; k++)
@@ -202,22 +275,22 @@ class scene1 extends Phaser.Scene{
                         else if (map[i][j] == 1)
                         {
                             
-                            if (compteur5 > 0)
+                            if (compteur5 >= 4)
                             {
                                 map_aux[i][j] = 5;
                             }
-                            else if (compteur1 > 5)
+                            else if (compteur1 == 5 || compteur1 == 4)
                             {
                                 map_aux[i][j] += 1;
                             }
-                            else if (compteur1 < 2)
+                            else if (compteur1+compteur2 < 3)
                             {
                                 map_aux[i][j] -= 1;
                             }
                         }
                         else if (map[i][j] == 2)
                         {
-                            if (compteur5 > 0)
+                            if (compteur5 >= 2)
                             {
                                 map_aux[i][j] = 5;
                             }
@@ -225,14 +298,14 @@ class scene1 extends Phaser.Scene{
                             {
                                 map_aux[i][j] += 1;
                             }
-                            else if (compteur1+compteur2 < 2)
+                            else if (compteur1+compteur2 < 5)
                             {
                                 map_aux[i][j] -= 1;
                             }
                         }
                         else if (map[i][j] == 3)
                         {
-                            if (compteur5 > 0)
+                            if (compteur5 >= 1)
                             {
                                 map_aux[i][j] = 5;
                             }
@@ -275,13 +348,29 @@ class scene1 extends Phaser.Scene{
                     }
                 }
 
+                compteur_cases_non_vides = 0;
                 for (let i = 0; i < num_l; i++)
                 {
                     for (let j = 0; j < num_c; j++)
                     {
+                        if(map_aux[i][j]!=0){compteur_cases_non_vides++}
                         map[i][j] = map_aux[i][j];
                     }
                 }
+                if(scoreMax<compteur_cases_non_vides)
+                {
+                    scoreMax = compteur_cases_non_vides;
+                    nb_tour_var_max = 50;
+                }
+                else
+                {
+                    nb_tour_var_max--;
+                }
+                
+                if(nb_tour_var_max<=0){pause=true;}
+                
+                scoreText.setFontSize(18+Math.floor(compteur_cases_non_vides/30));
+                scoreText.setText(compteur_cases_non_vides);
             }
             timing = (timing+1)%5;
         }
