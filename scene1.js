@@ -87,7 +87,7 @@ class scene1 extends Phaser.Scene{
         
         if (random_start)
         {
-            var nb_trait = 7+Math.floor(7*Math.random());
+            var nb_trait = 9+Math.floor(5*Math.random());
             for (let n = 0; n < nb_trait; n++)
             {
                 var x_start = Math.floor(config.width*Math.random());
@@ -115,8 +115,6 @@ class scene1 extends Phaser.Scene{
                     y_start += d*Math.sin(theta);
                     theta += 2*Math.PI/8*Math.random()-Math.PI/8;
                     if(p%3==0){size_radius = Math.min(Math.max(size_radius + Math.floor(3*Math.random())-1,0),5);}
-                    /*x_start = Math.min(Math.max(x_start-2*size_radius+Math.floor((4*size_radius+1)*Math.random()),0),config.width);
-                    y_start = Math.min(Math.max(y_start-2*size_radius+Math.floor((4*size_radius+1)*Math.random()),0),config.height);*/
                 }
             }
         }
