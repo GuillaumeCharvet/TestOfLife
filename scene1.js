@@ -1,10 +1,12 @@
 var map = [];
 var map_aux = [];
 
-const num_l = 200;
+const num_l = 175;
 const num_c = 200;
-const size_l = 4;
-const size_c = 4;
+const size_l = 8;
+const size_c = 8;
+
+const lim_display_grid = 12;
 
 var graphics;
 
@@ -55,7 +57,7 @@ class scene1 extends Phaser.Scene{
         map[1] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
         map[2] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
         map[3] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[4] = [0,0,0,0,0,0,0,0,0,1,1,1,0 ,0,0,0,0,0,0,0];
+        map[4] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
         map[5] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
         map[6] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
         map[7] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
@@ -81,7 +83,7 @@ class scene1 extends Phaser.Scene{
                 if (map[i][j] == 0){graphics.fillStyle(0xffff00, 1);}
                 else if (map[i][j] == 1){graphics.fillStyle(0xff00ff, 1);}
                 
-                if (size_c < 8){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
+                if (size_c < lim_display_grid){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
                 else {graphics.fillRect(j*size_c+1,i*size_l+1,size_c-2,size_l-2);}
             }
         }
@@ -140,7 +142,7 @@ class scene1 extends Phaser.Scene{
                         map[i+k][j+l] = color;
                         map_aux[i+k][j+l]  = color;
                         if (color == 0){graphics.fillStyle(0xffff00, 1);}else{graphics.fillStyle(0xff00ff, 1);}
-                        if (size_c < 8){graphics.fillRect((j+l)*size_c,(i+k)*size_l,size_c,size_l);}
+                        if (size_c < lim_display_grid){graphics.fillRect((j+l)*size_c,(i+k)*size_l,size_c,size_l);}
                         else {graphics.fillRect((j+l)*size_c+1,(i+k)*size_l+1,size_c-2,size_l-2);}
                     }
                 }
@@ -181,7 +183,7 @@ class scene1 extends Phaser.Scene{
                             if (map[i][j] == 0)
                             {
                                 graphics.fillStyle(0xff00ff, 1);
-                                if (size_c < 8){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
+                                if (size_c < lim_display_grid){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
                                 else {graphics.fillRect(j*size_c+1,i*size_l+1,size_c-2,size_l-2);}
                             }
                         }
@@ -191,7 +193,7 @@ class scene1 extends Phaser.Scene{
                             if (map[i][j] == 1)
                             {
                                 graphics.fillStyle(0xffff00, 1);
-                                if (size_c < 8){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
+                                if (size_c < lim_display_grid){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
                                 else {graphics.fillRect(j*size_c+1,i*size_l+1,size_c-2,size_l-2);}
                             }
                         }
