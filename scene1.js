@@ -12,6 +12,7 @@ var graphics;
 var scoreText;
 var reserveText;
 var reserveText2;
+var scoreFinalText;
 
 var cursors;
 
@@ -23,7 +24,7 @@ var pause_possible = false;
 var color = 1;
 var switch_color_possible = false;
 var size_radius = 2;
-var reserve_mouse = 120;
+var reserve_mouse = 180;
 var reserve_mouse2 = 5;
 
 var mouse_possible = false;
@@ -34,7 +35,8 @@ var random_start = true;
 var compteur_cases_non_vides;
 
 var scoreMax = 0;
-var nb_tour_var_max = 50;
+var nb_tour_var_max_max = 100;
+var nb_tour_var_max;
 
 class scene1 extends Phaser.Scene{
     
@@ -267,7 +269,7 @@ class scene1 extends Phaser.Scene{
                         //Regles d'evolution
                         if (map[i][j] == 0)
                         {
-                            if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6)
+                            if (compteur1 == 3 || compteur1+compteur2+compteur3+compteur4 > 6)
                             {
                                 map_aux[i][j] += 1;
                             }
@@ -275,7 +277,7 @@ class scene1 extends Phaser.Scene{
                         else if (map[i][j] == 1)
                         {
                             
-                            if (compteur5 >= 4)
+                            if (compteur5 >= 3)
                             {
                                 map_aux[i][j] = 5;
                             }
@@ -283,7 +285,7 @@ class scene1 extends Phaser.Scene{
                             {
                                 map_aux[i][j] += 1;
                             }
-                            else if (compteur1+compteur2 < 3)
+                            else if (compteur1+compteur2 < 3 || compteur1+compteur2 >5)
                             {
                                 map_aux[i][j] -= 1;
                             }
@@ -320,7 +322,7 @@ class scene1 extends Phaser.Scene{
                         }
                         else if (map[i][j] == 4)
                         {
-                            if (compteur5 > 0)
+                            if (compteur5 >= 1)
                             {
                                 map_aux[i][j] = 5;
                             }
@@ -333,11 +335,11 @@ class scene1 extends Phaser.Scene{
                                 map_aux[i][j] -= 1;
                             }
                         }
-                        else if ( 5 <= map[i][j] && map[i][j] < 8)
+                        else if ( 5 <= map[i][j] && map[i][j] < 21)
                         {
                             map_aux[i][j] += 1;
                         }
-                        else if (map[i][j] == 8)
+                        else if (map[i][j] == 21)
                         {
                             map_aux[i][j] = 0;
                         }
@@ -360,14 +362,23 @@ class scene1 extends Phaser.Scene{
                 if(scoreMax<compteur_cases_non_vides)
                 {
                     scoreMax = compteur_cases_non_vides;
-                    nb_tour_var_max = 50;
+                    nb_tour_var_max = nb_tour_var_max_max;
                 }
                 else
                 {
                     nb_tour_var_max--;
                 }
                 
-                if(nb_tour_var_max<=0){pause=true;}
+                if(nb_tour_var_max<=0)
+                {
+                    pause=true;
+                    scoreText.setVisible(false);
+                    scoreFinalText = this.add.text(config.width/2-650, config.height/2-80,"Score max = "+scoreMax, {
+                        fontSize: '120px',
+                        padding: { x: 10, y: 5 },
+                        fill: '#000000'
+                    });
+                }
                 
                 scoreText.setFontSize(18+Math.floor(compteur_cases_non_vides/30));
                 scoreText.setText(compteur_cases_non_vides);
@@ -389,6 +400,7 @@ function draw(color,x,y,lx,ly)
     else if (color == 6){graphics.fillStyle(0x30ff30, 1);}
     else if (color == 7){graphics.fillStyle(0x60ff60, 1);}
     else if (color == 8){graphics.fillStyle(0x90ff90, 1);}
+    else                {graphics.fillStyle(0x90ff90, 1);}
     
     if (size_c < lim_display_grid){graphics.fillRect(x,y,lx,ly);}
     else {graphics.fillRect(x+1,y+1,lx-2,ly-2);}
