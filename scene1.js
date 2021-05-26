@@ -1,10 +1,10 @@
 var map = [];
 var map_aux = [];
 
-const num_l = 175;
-const num_c = 200;
-const size_l = 8;
-const size_c = 8;
+const num_l = 350;
+const num_c = 400;
+const size_l = 16;
+const size_c = 16;
 
 const lim_display_grid = 12;
 
@@ -53,48 +53,14 @@ class scene1 extends Phaser.Scene{
             }
         }
         
-        /*map[0] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[1] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[2] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[3] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[4] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[5] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[6] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[7] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[8] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[9] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[10] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[11] = [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0];
-        map[16] = [0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0];*/
-
-        
         for (let i = 0; i < num_l; i++)
         {
             for (let j = 0; j < num_c; j++)
             {
                 map_aux[i][j] = map[i][j];
+                draw(map[i][j],j*size_c,i*size_l,size_c,size_l);
             }
         }
-        
-        for (let i = 0; i < num_l; i++)
-        {
-            for (let j = 0; j < num_c; j++)
-            {
-                if (map[i][j] == 0){graphics.fillStyle(0xffff00, 1);}
-                else if (map[i][j] == 1){graphics.fillStyle(0xff00ff, 1);}
-                
-                if (size_c < lim_display_grid){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
-                else {graphics.fillRect(j*size_c+1,i*size_l+1,size_c-2,size_l-2);}
-            }
-        }
-        
-        /*this.input.on('pointerdown', function (pointer) {
-            console.log('x = ',Math.floor(pointer.x/size_c),', y = ',Math.floor(pointer.y/size_l));
-            map[Math.floor(pointer.y/size_l)][Math.floor(pointer.x/size_c)] = color;
-            map_aux[Math.floor(pointer.y/size_l)][Math.floor(pointer.x/size_c)]  = color;
-            if (color == 0){graphics.fillStyle(0xffff00, 1);}else{graphics.fillStyle(0xff00ff, 1);}
-            graphics.fillRect(Math.floor(pointer.x/size_c)*size_c+1,Math.floor(pointer.y/size_l)*size_l+1,size_c-2,size_l-2);
-        }, this); */
     }
     
     update ()
@@ -141,9 +107,10 @@ class scene1 extends Phaser.Scene{
                     {
                         map[i+k][j+l] = color;
                         map_aux[i+k][j+l]  = color;
-                        if (color == 0){graphics.fillStyle(0xffff00, 1);}else{graphics.fillStyle(0xff00ff, 1);}
+                        draw(color,(j+l)*size_c,(i+k)*size_l,size_c,size_l);
+                        /*if (color == 0){graphics.fillStyle(0xffff00, 1);}else{graphics.fillStyle(0xff00ff, 1);}
                         if (size_c < lim_display_grid){graphics.fillRect((j+l)*size_c,(i+k)*size_l,size_c,size_l);}
-                        else {graphics.fillRect((j+l)*size_c+1,(i+k)*size_l+1,size_c-2,size_l-2);}
+                        else {graphics.fillRect((j+l)*size_c+1,(i+k)*size_l+1,size_c-2,size_l-2);}*/
                     }
                 }
             }
@@ -158,6 +125,7 @@ class scene1 extends Phaser.Scene{
                     for (let j = 0; j < num_c; j++)
                     {
                         //console.log("i =",i,"j =",j,"map[i][j] =",map[i][j]);
+                        /*
                         var compteur = 0;
                         for (let k = -1; k < 2; k++)
                         {
@@ -169,14 +137,12 @@ class scene1 extends Phaser.Scene{
                                 else if (dep_ik < 0){dep_ik = num_l-1}
                                 if (dep_jl > num_c-1){dep_jl = 0}
                                 else if (dep_jl < 0){dep_jl = num_c-1}
-                                //console.log("dep_ik =",dep_ik);
                                 if ((k!=0 || l!=0) && map[dep_ik][dep_jl] == 1)
                                 {
                                     compteur += 1;
                                 }
                             }
                         }
-                        //console.log(compteur);
                         if (compteur == 3)
                         {
                             map_aux[i][j] = 1;
@@ -196,7 +162,116 @@ class scene1 extends Phaser.Scene{
                                 if (size_c < lim_display_grid){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
                                 else {graphics.fillRect(j*size_c+1,i*size_l+1,size_c-2,size_l-2);}
                             }
+                        }*/
+                        
+                        //Comptage des voisins
+                        var compteur1 = 0;
+                        var compteur2 = 0;
+                        var compteur3 = 0;
+                        var compteur4 = 0;
+                        var compteur5 = 0;
+                        for (let k = -1; k < 2; k++)
+                        {
+                            for (let l = -1; l < 2; l++)
+                            {
+                                var dep_ik = i+k;
+                                var dep_jl = j+l;
+                                if (dep_ik > num_l-1){dep_ik = 0}
+                                else if (dep_ik < 0){dep_ik = num_l-1}
+                                if (dep_jl > num_c-1){dep_jl = 0}
+                                else if (dep_jl < 0){dep_jl = num_c-1}
+                                if (k!=0 || l!=0)
+                                {
+                                    if (map[dep_ik][dep_jl] == 1){compteur1 += 1;}
+                                    else if (map[dep_ik][dep_jl] == 2){compteur2 += 1;}
+                                    else if (map[dep_ik][dep_jl] == 3){compteur3 += 1;}
+                                    else if (map[dep_ik][dep_jl] == 4){compteur4 += 1;}
+                                    else if (map[dep_ik][dep_jl] >= 5){compteur5 += 1;}
+                                }
+                            }
                         }
+                        
+                        //Regles d'evolution
+                        if (map[i][j] == 0)
+                        {
+                            if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                        }
+                        else if (map[i][j] == 1)
+                        {
+                            
+                            if (compteur5 > 0)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1 > 5)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1 < 2)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 2)
+                        {
+                            if (compteur5 > 0)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1+compteur2 > 6)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2 < 2)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 3)
+                        {
+                            if (compteur5 > 0)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1+compteur2+compteur3 > 7)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2+compteur3 < 3)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 4)
+                        {
+                            if (compteur5 > 0)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            if (compteur4 == 2 && compteur3 == 2)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur3+compteur2 < 3)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if ( 5 <= map[i][j] && map[i][j] < 8)
+                        {
+                            map_aux[i][j] += 1;
+                        }
+                        else if (map[i][j] == 8)
+                        {
+                            map_aux[i][j] = 0;
+                        }
+                        
+                        //Affichage si changement
+                        if (map[i][j] != map_aux[i][j]){draw(map_aux[i][j],j*size_c,i*size_l,size_c,size_l);}
+                        
                     }
                 }
 
@@ -212,4 +287,20 @@ class scene1 extends Phaser.Scene{
         }
         
     }
+}
+
+function draw(color,x,y,lx,ly)
+{
+    if (color == 0){graphics.fillStyle(0xf2e2e2, 1);}
+    else if (color == 1){graphics.fillStyle(0xff00ff, 1);}
+    else if (color == 2){graphics.fillStyle(0xcf00ff, 1);}
+    else if (color == 3){graphics.fillStyle(0xaf00ff, 1);}
+    else if (color == 4){graphics.fillStyle(0x8f00ff, 1);}
+    else if (color == 5){graphics.fillStyle(0x00ff00, 1);}
+    else if (color == 6){graphics.fillStyle(0x30ff30, 1);}
+    else if (color == 7){graphics.fillStyle(0x60ff60, 1);}
+    else if (color == 8){graphics.fillStyle(0x90ff90, 1);}
+    
+    if (size_c < lim_display_grid){graphics.fillRect(x,y,lx,ly);}
+    else {graphics.fillRect(x+1,y+1,lx-2,ly-2);}
 }
