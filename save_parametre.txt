@@ -1,4 +1,4 @@
-**** PARAMETRE 1 ****
+************************ PARAMETRE 1 ************************
 
 if (map[i][j] == 0)
                         {
@@ -73,4 +73,182 @@ if (map[i][j] == 0)
                             map_aux[i][j] = 0;
                         }
 
-**** PARAMETRE 2 ****
+************************ PARAMETRE 2 ************************
+
+if (map[i][j] == 0)
+                        {
+                            if (compteur1 == 3 || compteur1+compteur2+compteur3+compteur4 > 6)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                        }
+                        else if (map[i][j] == 1)
+                        {
+                            
+                            if (compteur5 >= 3)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1 == 5 || compteur1 == 4)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2 < 3 || compteur1+compteur2 >5)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 2)
+                        {
+                            if (compteur5 >= 2)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1+compteur2 > 6)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2 < 5)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 3)
+                        {
+                            if (compteur5 >= 1)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1+compteur2+compteur3 > 7)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2+compteur3 < 3)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 4)
+                        {
+                            if (compteur5 >= 1)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur4 == 2 && compteur3 == 2)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur3+compteur2 < 3)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if ( 5 <= map[i][j] && map[i][j] < 21)
+                        {
+                            map_aux[i][j] += 1;
+                        }
+                        else if (map[i][j] == 21)
+                        {
+                            map_aux[i][j] = 0;
+                        }
+                        
+************************ PARAMETRE 3 ************************
+
+if (map[i][j] == 0)
+                        {
+                            if (compteur1+compteur2+compteur3+compteur4 == 1 || compteur1+compteur2+compteur3+compteur4 > 6)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                        }
+                        else if (map[i][j] == 1)
+                        {
+                            if ((compteur5 >= 3 && compteur1+compteur2 < 3) || compteur4 >= 5)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1 == 1 || compteur2+compteur3 >= 4)//else if (compteur1 == 5 || compteur1 == 4)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2 < 2 || compteur1+compteur2 >5)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 2)
+                        {
+                            if ((compteur5 >= 2 && compteur1+compteur2 < 3) || compteur4 >= 4)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1+compteur2 > 6 && compteur2+compteur3 < 5)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2 < 5)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 3)
+                        {
+                            if (compteur5 >= 1 || compteur4 >= 3)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur1+compteur2+compteur3 > 7 && compteur1 >= 3)
+                            {
+                                map_aux[i][j] += 0;
+                            }
+                            else if (compteur1+compteur2+compteur3 > 7 && compteur1 < 3)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2+compteur3 < 4)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 4)
+                        {
+                            if (compteur5 >= 1)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur4 >= 2)
+                            {
+                                map_aux[i][j] = 0;
+                            }
+                            else if (compteur3 >= 2)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur3+compteur2 < 3)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if ( 5 <= map[i][j] && map[i][j] < 18)
+                        {
+                            map_aux[i][j] += 1;
+                        }
+                        else if (map[i][j] == 18)
+                        {
+                            map_aux[i][j] = 0;
+                        }
+
+if (color == 0)     {ind_color = 0; hauteur = 0;}
+    else if (color == 1){ind_color = 1; hauteur = 10;}
+    else if (color == 2){ind_color = 2; hauteur = 20;}
+    else if (color == 3){ind_color = 3; hauteur = 40;}
+    else if (color == 4){ind_color = 4; hauteur = 80;}
+    else if (color == 5){ind_color = 5; hauteur = 0;}
+    else if (color == 6){ind_color = 6; hauteur = -4;}
+    else if (color == 7){ind_color = 7; hauteur =-8;}
+    else if (color >= 8){ind_color = 8; hauteur =-12;}
+    else                {ind_color = 8; hauteur =-16;}
+
+************************ PARAMETRE 4 ************************
+
+
