@@ -48,13 +48,13 @@ var decalage_diag;
 
 /************** PARAMETRES MODIFIABLES **************/
 
-const num_l = 80;
-const num_c = 80;
+const num_l = 50;
+const num_c = 50;
 const size_l = 10;
 const size_c = 10;
 
 const lim_display_grid = 13;
-const angle_display = 0;
+const angle_display = 10;
 
 const mode_score = false;
 const random_start = false;
@@ -477,10 +477,12 @@ function clean()
         if(map_aux[0][j]==0 || map_aux[0][j]>=5)
         {
             draw(9,-1,j);
+            draw(9,-2,j);
         }
         if(map_aux[num_l-1][j]<5)
         {
             draw(9,num_l,j);
+            draw(9,num_l+1,j);
         }
     }
     for (let i = 0; i < num_l; i++)
@@ -488,6 +490,7 @@ function clean()
         if(map_aux[i][0]==0 || map_aux[i][0]>=5)
         {
             draw(9,i,-1);
+            draw(9,i,-2);
         }
     }
 }
