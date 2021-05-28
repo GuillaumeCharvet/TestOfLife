@@ -35,15 +35,26 @@ var nb_tour_var_max;
 
 var palette_couleur;
 
+/************************ TEST **********************/
+
+var nb_trait;
+var x_start;
+var y_start;
+var theta;
+var length_trait;
+var d;
+
+var decalage_diag;
+
 /************** PARAMETRES MODIFIABLES **************/
 
-const num_l = 60;
-const num_c = 60;
-const size_l = 12;
-const size_c = 12;
+const num_l = 80;
+const num_c = 80;
+const size_l = 10;
+const size_c = 10;
 
 const lim_display_grid = 13;
-const angle_display = 4;
+const angle_display = 0;
 
 const mode_score = false;
 const random_start = false;
@@ -64,9 +75,10 @@ class scene1 extends Phaser.Scene{
     {
         graphics = this.add.graphics();
         
-        //this.physics.world.setBounds(-num_l*angle_display, 0,config.width,config.height);
-        //this.cameras.main.setPosition(-num_l*angle_display + 0.1*(num_c * (size_c+angle_display) + num_l * angle_display),0.1*num_l * size_l,config.width,config.height);
-        this.cameras.main.setScroll(-num_l*(angle_display+1)-0.02*(num_c * (size_c+angle_display) + num_l * (angle_display+1)),-70);
+        if (angle_display == 0){decalage_diag = 0;}
+        else {decalage_diag = 1;}
+        
+        this.cameras.main.setScroll(-num_l*(angle_display+decalage_diag)-0.02*(num_c * (size_c+angle_display) + num_l * (angle_display+decalage_diag)),-70);
         
         if (mode_score)
         {
@@ -91,7 +103,7 @@ class scene1 extends Phaser.Scene{
         
         cursors = this.input.keyboard.addKeys({ 'pause': Phaser.Input.Keyboard.KeyCodes.SPACE, 'switch_color': Phaser.Input.Keyboard.KeyCodes.C, 'radius_up': Phaser.Input.Keyboard.KeyCodes.P, 'radius_down': Phaser.Input.Keyboard.KeyCodes.M, 'switch_mode_dessin': Phaser.Input.Keyboard.KeyCodes.B, 'trait_droit': Phaser.Input.Keyboard.KeyCodes.ALT});
         
-        palette_couleur = [[0xf2e2e2,0xf2e2e2,0xf2e2e2],[0xff00ff,0xcf22cf,0xcf33cf],[0xcf00ff,0x9f22cf,0x9f33cf],[0xaf00ff,0x7f22cf,0x7f33cf],[0x8f00ff,0x5f22cf,0x5f33cf],[0x00ff00,0x00ff00,0x00ff00],[0x30ff30,0x30ff30,0x30ff30],[0x60ff60,0x60ff60,0x60ff60],[0x90ff90,0x90ff90,0x90ff90],[0x90ff90,0x90ff90,0x90ff90],];
+        palette_couleur = [[0xf2e2e2,0xf2e2e2,0xf2e2e2],[0xff00ff,0xcf22cf,0xcf33cf],[0xcf00ff,0x9f22cf,0x9f33cf],[0xaf00ff,0x7f22cf,0x7f33cf],[0x8f00ff,0x5f22cf,0x5f33cf],[0x00ff00,0x00ff00,0x00ff00],[0x30ff30,0x30ff30,0x30ff30],[0x60ff60,0x60ff60,0x60ff60],[0x90ff90,0x90ff90,0x90ff90],[0x000000,0x000000,0x000000]];
         
         for (let i = 0; i < num_l; i++)
         {
@@ -106,30 +118,30 @@ class scene1 extends Phaser.Scene{
         
         if (random_start)
         {
-            var nb_trait = 9+Math.floor(5*Math.random());
+            nb_trait = 9+Math.floor(5*Math.random());
             for (let n = 0; n < nb_trait; n++)
             {
-                var x_start = Math.floor(config.width*Math.random());
-                var y_start = Math.floor(config.height*Math.random());
-                var theta = 2*Math.PI*Math.random();
-                var length_trait = 3+Math.floor(28*Math.random());
+                x_start = Math.floor(config.width*Math.random());
+                y_start = Math.floor(config.height*Math.random());
+                theta = 2*Math.PI*Math.random();
+                length_trait = 3+Math.floor(28*Math.random());
                 for (let p = 0; p < length_trait; p++)
                 {
-                    var i = Math.floor(y_start/size_l);
-                    var j = Math.floor(x_start/size_c);
+                    let i_p = Math.floor(y_start/size_l);
+                    let j_p = Math.floor(x_start/size_c);
                     for (let k = -size_radius; k <= size_radius; k++)
                     {
                         for (let l = -size_radius; l <= size_radius; l++)
                         {
-                            if (Math.pow(Math.pow(k,2)+Math.pow(l,2),0.5) <= size_radius && 0<=i+k && i+k<num_l && 0<=j+l && j+l<num_c)
+                            if (Math.pow(Math.pow(k,2)+Math.pow(l,2),0.5) <= size_radius && 0<=i_p+k && i_p+k<num_l && 0<=j_p+l && j_p+l<num_c)
                             {
-                                map[i+k][j+l] = color;
-                                map_aux[i+k][j+l]  = color;
+                                map[i_p+k][j_p+l] = color;
+                                map_aux[i_p+k][j_p+l]  = color;
                                 //draw(color,(j+l)*(size_c+angle_display)-angle_display*i,(i+k)*size_l,(size_c+angle_display),size_l);
                             }
                         }
                     }
-                    var d = 2+Math.floor((6*size_radius+1)*Math.random());
+                    d = 2+Math.floor((6*size_radius+1)*Math.random());
                     x_start += d*Math.cos(theta);
                     y_start += d*Math.sin(theta);
                     theta += 2*Math.PI/8*Math.random()-Math.PI/8;
@@ -143,7 +155,7 @@ class scene1 extends Phaser.Scene{
             for (let j = 0; j < num_c; j++)
             {
                 map_aux[i][j] = map[i][j];
-                draw(map[i][j],i,j);//j*(size_c+angle_display)-angle_display*i,i*size_l,(size_c+angle_display),size_l);
+                draw(map[i][j],i,j);
             }
         }
         size_radius = 1;
@@ -191,8 +203,8 @@ class scene1 extends Phaser.Scene{
         
         if (this.input.activePointer.isDown && 0<game.input.mousePointer.y<config.height && 0<game.input.mousePointer.x<config.width && ((reserve_mouse>0 && reserve_mouse2>0) || !mode_score))
         {
-            var i = Math.floor((game.input.mousePointer.y-70)/size_l);
-            var j = Math.floor((game.input.mousePointer.x-num_l*(angle_display+1)-0.02*(num_c * (size_c+angle_display) + num_l * (angle_display+1))+angle_display*i)/(size_c+angle_display));;
+            let i = Math.floor((game.input.mousePointer.y-70)/size_l);
+            let j = Math.round((game.input.mousePointer.x-num_l*(angle_display+decalage_diag)-0.02*(num_c * (size_c+angle_display) + num_l * (angle_display+decalage_diag))+angle_display*i)/(size_c+angle_display));;
             for (let k = -size_radius; k <= size_radius; k++)
             {
                 for (let l = -size_radius; l <= size_radius; l++)
@@ -250,6 +262,7 @@ class scene1 extends Phaser.Scene{
         {
             if (timing == 0)
             {
+                clean();
                 for (let i = 0; i < num_l; i++)
                 {
                     for (let j = 0; j < num_c; j++)
@@ -294,17 +307,17 @@ class scene1 extends Phaser.Scene{
                         }*/
                         
                         //Comptage des voisins
-                        var compteur1 = 0;
-                        var compteur2 = 0;
-                        var compteur3 = 0;
-                        var compteur4 = 0;
-                        var compteur5 = 0;
+                        let compteur1 = 0;
+                        let compteur2 = 0;
+                        let compteur3 = 0;
+                        let compteur4 = 0;
+                        let compteur5 = 0;
                         for (let k = -1; k < 2; k++)
                         {
                             for (let l = -1; l < 2; l++)
                             {
-                                var dep_ik = i+k;
-                                var dep_jl = j+l;
+                                let dep_ik = i+k;
+                                let dep_jl = j+l;
                                 if (dep_ik > num_l-1){dep_ik = 0}
                                 else if (dep_ik < 0){dep_ik = num_l-1}
                                 if (dep_jl > num_c-1){dep_jl = 0}
@@ -439,29 +452,55 @@ class scene1 extends Phaser.Scene{
                 }
             }
             timing = (timing+1)%5;
-            clean();
         }
         timing2 = (timing2+1)%1000;
+        if (timing2%0 == 0)
+        {
+            for(let type in this.cache) {
+                console.log(type)
+
+                if (type != 'game') {
+                    for (let entry in this.cache[type]) {
+                        this.cache[type].remove(entry);
+                    }
+                }
+
+            }
+        }
     }
 }
 
 function clean()
 {
-    var poly = new Phaser.Geom.Polygon();
-
-    poly.setTo([ new Phaser.Geom.Point(0, 0), new Phaser.Geom.Point(config.width, 0), new Phaser.Geom.Point(config.width, 0), new Phaser.Geom.Point(0, 0) ]);
-    graphics.fillStyle(0x000000, 1);
-    graphics.fillPoints(poly.points, true);
+    for (let j = 0; j < num_c; j++)
+    {
+        if(map_aux[0][j]==0 || map_aux[0][j]>=5)
+        {
+            draw(9,-1,j);
+        }
+        if(map_aux[num_l-1][j]<5)
+        {
+            draw(9,num_l,j);
+        }
+    }
+    for (let i = 0; i < num_l; i++)
+    {
+        if(map_aux[i][0]==0 || map_aux[i][0]>=5)
+        {
+            draw(9,i,-1);
+        }
+    }
 }
 
 function draw(color,i,j)
 {
-    var x = j*(size_c+angle_display)-(angle_display+1)*i;//+angle_display*(num_l-i);
-    var y = i*size_l;
-    var lx = size_c;
-    var ly = size_l;
-    var hauteur;
-    var ind_color;
+    let x = j*(size_c+angle_display)-(angle_display+decalage_diag)*i;//+angle_display*(num_l-i);
+    let y = i*size_l;
+    let lx = size_c;
+    let ly = size_l;
+    let hauteur;
+    let ind_color;
+    
     if (color == 0)     {ind_color = 0; hauteur = 0;}
     else if (color == 1){ind_color = 1; hauteur = 5;}
     else if (color == 2){ind_color = 2; hauteur = 10;}
@@ -469,50 +508,38 @@ function draw(color,i,j)
     else if (color == 4){ind_color = 4; hauteur = 20;}
     else if (color == 5){ind_color = 5; hauteur = 0;}
     else if (color == 6){ind_color = 6; hauteur = -4;}
-    else if (color == 7){ind_color = 7; hauteur =-8;}
-    else if (color >= 8){ind_color = 8; hauteur =-12;}
-    else                {ind_color = 8; hauteur =-16;}
+    else if (color == 7){ind_color = 7; hauteur = -8;}
+    else if (color == 9){ind_color = 9; hauteur = 0;}
+    else if (color >= 8){ind_color = 8; hauteur = -12;}
+    else                {ind_color = 8; hauteur = -16;}
     
+    if (angle_display == 0){hauteur = 0;}
     y -= hauteur;
     
     if (size_c < lim_display_grid)
     {
-        graphics.lineStyle(5, 0xFF0FFF, 1.0);
-        var poly = new Phaser.Geom.Polygon();
-        
-        poly.setTo([ new Phaser.Geom.Point(x, y), new Phaser.Geom.Point(x+lx+angle_display, y), new Phaser.Geom.Point(x+lx, y+ly), new Phaser.Geom.Point(x-angle_display, y+ly) ]);
-        graphics.fillStyle(palette_couleur[ind_color][0], 1);
-        graphics.fillPoints(poly.points, true);
-        
-        poly.setTo([ new Phaser.Geom.Point(x-angle_display, y+ly), new Phaser.Geom.Point(x+lx, y+ly), new Phaser.Geom.Point(x+lx, y+ly+hauteur), new Phaser.Geom.Point(x-angle_display, y+ly+hauteur) ]);
-        graphics.fillStyle(palette_couleur[ind_color][1], 1);
-        graphics.fillPoints(poly.points, true);
-        
-        poly.setTo([ new Phaser.Geom.Point(x+lx, y+ly), new Phaser.Geom.Point(x+lx+angle_display, y), new Phaser.Geom.Point(x+lx+angle_display, y+hauteur), new Phaser.Geom.Point(x+lx, y+ly+hauteur) ]);
-        graphics.fillStyle(palette_couleur[ind_color][2], 1);
-        graphics.fillPoints(poly.points, true);
-        /*
-        graphics.fillRect(x,y-hauteur,lx,ly);
-        if (angle_display>0)
-        {
-            graphics.fillTriangle(x+lx,y-hauteur,x+lx+angle_display,y-hauteur,x+lx,y+ly-hauteur);
-            graphics.fillTriangle(x,y-hauteur,x,y+ly-hauteur,x-angle_display,y+ly-hauteur);
-        }*/
+        if (hauteur >= 0){make_poly(x,y,lx,ly,hauteur,ind_color,0);}
+        else {make_poly(x,y,lx,ly,hauteur,ind_color,0);}
     }
-    else
+    else {make_poly(x,y,lx,ly,hauteur,ind_color,1);}
+}
+
+function make_poly(x,y,lx,ly,hauteur,ind_color,decalage)
+{
+    graphics.lineStyle(5, 0xFF0FFF, 1.0);
+    let poly = new Phaser.Geom.Polygon();
+
+    poly.setTo([ new Phaser.Geom.Point(x+decalage, y+decalage), new Phaser.Geom.Point(x+lx+angle_display-decalage, y+decalage), new Phaser.Geom.Point(x+lx-decalage, y+ly-decalage), new Phaser.Geom.Point(x-angle_display+decalage, y+ly-decalage) ]);
+    graphics.fillStyle(palette_couleur[ind_color][0], 1);
+    graphics.fillPoints(poly.points, true);
+
+    if (angle_display > 0)
     {
-        graphics.lineStyle(5, 0xFF0FFF, 1.0);
-        var poly = new Phaser.Geom.Polygon();
-        
-        poly.setTo([ new Phaser.Geom.Point(x+1, y+1), new Phaser.Geom.Point(x+lx+angle_display-1, y+1), new Phaser.Geom.Point(x+lx-1, y+ly-1), new Phaser.Geom.Point(x-angle_display+1, y+ly-1) ]);
-        graphics.fillStyle(palette_couleur[ind_color][0], 1);
-        graphics.fillPoints(poly.points, true);
-        
-        poly.setTo([ new Phaser.Geom.Point(x-angle_display+1, y+ly-1), new Phaser.Geom.Point(x+lx-1, y+ly-1), new Phaser.Geom.Point(x+lx-1, y+ly-1+hauteur), new Phaser.Geom.Point(x-angle_display+1, y+ly-1+hauteur) ]);
+        poly.setTo([ new Phaser.Geom.Point(x-angle_display+decalage, y+ly-decalage), new Phaser.Geom.Point(x+lx-decalage, y+ly-decalage), new Phaser.Geom.Point(x+lx-decalage, y+ly-decalage+hauteur), new Phaser.Geom.Point(x-angle_display+decalage, y+ly+hauteur-decalage) ]);
         graphics.fillStyle(palette_couleur[ind_color][1], 1);
         graphics.fillPoints(poly.points, true);
-        
-        poly.setTo([ new Phaser.Geom.Point(x+lx-1, y+ly-1), new Phaser.Geom.Point(x+lx+angle_display-1, y+1), new Phaser.Geom.Point(x+lx+angle_display-1, y+1+hauteur), new Phaser.Geom.Point(x+lx-1, y+ly-1+hauteur) ]);
+
+        poly.setTo([ new Phaser.Geom.Point(x+lx-decalage, y+ly-decalage), new Phaser.Geom.Point(x+lx+angle_display-decalage, y+decalage), new Phaser.Geom.Point(x+lx+angle_display-decalage, y+decalage+hauteur), new Phaser.Geom.Point(x+lx-decalage, y+ly-decalage+hauteur) ]);
         graphics.fillStyle(palette_couleur[ind_color][2], 1);
         graphics.fillPoints(poly.points, true);
     }
