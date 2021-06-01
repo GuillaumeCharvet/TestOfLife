@@ -2,7 +2,8 @@
 
 if (map[i][j] == 0)
                         {
-                            if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6)
+                            if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6 || compteur4+compteur5 == 4)
+                            //if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6)
                             {
                                 map_aux[i][j] += 1;
                             }
@@ -72,6 +73,20 @@ if (map[i][j] == 0)
                         {
                             map_aux[i][j] = 0;
                         }
+
+if (color == 0)     {ind_color = 0; hauteur = 0;}
+    else if (color == 1){ind_color = 1; hauteur = 5;}
+    else if (color == 2){ind_color = 2; hauteur = 7;}
+    else if (color == 3){ind_color = 3; hauteur = 9;}
+    else if (color == 4){ind_color = 4; hauteur = 11;}
+    else if (color == 5){ind_color = 5; hauteur = 12;}
+    else if (color == 6){ind_color = 6; hauteur = 11;}
+    else if (color == 7){ind_color = 7; hauteur = 7;}
+    else if (color == 9){ind_color = 9; hauteur = 0;}
+    else if (color >= 8){ind_color = 8; hauteur = 5;}
+    else                {ind_color = 8; hauteur = -16;}
+    
+palette_couleur = [[0xf2e2e2,0xf2e2e2,0xf2e2e2],[0xff00ff,0xcf22cf,0xcf33cf],[0xcf00ff,0x9f22cf,0x9f33cf],[0xaf00ff,0x7f22cf,0x7f33cf],[0x8f00ff,0x5f22cf,0x5f33cf],[0x00ff00,0x00df00,0x00cf00],[0x30ff30,0x30df30,0x30cf30],[0x60ff60,0x60df60,0x60cf60],[0x90ff90,0x90df90,0x90cf90],[0x000000,0x000000,0x000000]];
 
 ************************ PARAMETRE 2 ************************
 
@@ -251,4 +266,13 @@ if (color == 0)     {ind_color = 0; hauteur = 0;}
 
 ************************ PARAMETRE 4 ************************
 
+if (compteur1+compteur2+compteur3+compteur4+compteur5 == 3)
+                        {
+                            map_aux[i][j] = 1;
+                        }
+                        else if (compteur1 > 3 || compteur1 < 2)
+                        {
+                            map_aux[i][j] = 0;
+                        }
 
+************************ PARAMETRE 5 ************************

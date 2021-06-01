@@ -6,6 +6,7 @@ var scoreText;
 var reserveText;
 var reserveText2;
 var scoreFinalText;
+var helpText;
 
 var cursors;
 
@@ -26,6 +27,8 @@ var radius_up_possible = false;
 var radius_down_possible = false;
 var mode_dessin = 0;
 var switch_mode_dessin_possible = false;
+var rotate_left_possible = false;
+var rotate_right_possible = false;
 
 var compteur_cases_non_vides;
 
@@ -40,24 +43,26 @@ var palette_couleur;
 var nb_trait;
 var x_start;
 var y_start;
+var i_start;
+var j_start;
 var theta;
 var length_trait;
 var d;
 
-var decalage_diag;
-
 /************** PARAMETRES MODIFIABLES **************/
 
-const num_l = 50;
-const num_c = 50;
-const size_l = 10;
-const size_c = 10;
+const num_l = 100;
+const num_c = 100;
+const size_l = 4;
+const size_c = 4;
 
 const lim_display_grid = 13;
-const angle_display = 10;
+var angle_display = 2;
+
+var decalage_diag = angle_display?1:0;
 
 const mode_score = false;
-const random_start = false;
+const random_start = false;//mode_score;
 
 class scene1 extends Phaser.Scene{
     
@@ -78,32 +83,40 @@ class scene1 extends Phaser.Scene{
         if (angle_display == 0){decalage_diag = 0;}
         else {decalage_diag = 1;}
         
-        this.cameras.main.setScroll(-num_l*(angle_display+decalage_diag)-0.02*(num_c * (size_c+angle_display) + num_l * (angle_display+decalage_diag)),-70);
-        
+        //this.cameras.main.setScroll(-num_l*(angle_display+decalage_diag)-0.02*(num_c * (size_c+angle_display) + num_l * (angle_display+decalage_diag)),-70);
+        //this.cameras.main.setScroll(0,-70);
+        this.cameras.main.setScroll(-(num_l * (angle_display + decalage_diag) + 70),-70);
+
         if (mode_score)
         {
-            scoreText = this.add.text(16, 16,"", {
+            scoreText = this.add.text(16 +40, 16,"", {
                 fontSize: '18px',
                 padding: { x: 10, y: 5 },
                 fill: '#ffffff'
             }).setScrollFactor(0);
 
-            reserveText= this.add.text(config.width - 330, config.height - 66,"reserve longueur clic = "+reserve_mouse, {
+            reserveText= this.add.text(config.width - 330-110, config.height - 66,"reserve longueur clic = "+reserve_mouse, {
                 fontSize: '18px',
                 padding: { x: 10, y: 5 },
                 fill: '#ffffff'
             }).setScrollFactor(0);
 
-            reserveText2= this.add.text(config.width - 330, config.height - 36,"reserve nombre clic = "+reserve_mouse2, {
+            reserveText2= this.add.text(config.width - 330-110, config.height - 36,"reserve nombre clic = "+reserve_mouse2, {
                 fontSize: '18px',
                 padding: { x: 10, y: 5 },
                 fill: '#ffffff'
             }).setScrollFactor(0);
         }
         
-        cursors = this.input.keyboard.addKeys({ 'pause': Phaser.Input.Keyboard.KeyCodes.SPACE, 'switch_color': Phaser.Input.Keyboard.KeyCodes.C, 'radius_up': Phaser.Input.Keyboard.KeyCodes.P, 'radius_down': Phaser.Input.Keyboard.KeyCodes.M, 'switch_mode_dessin': Phaser.Input.Keyboard.KeyCodes.B, 'trait_droit': Phaser.Input.Keyboard.KeyCodes.ALT});
+        helpText= this.add.text(10, config.height/2,"M = taille brush moins grande \n P = taille brush plus grande \n B = mode brush "+mode_dessin+"\n C = couleur "+color*2-1, {
+                fontSize: '18px',
+                padding: { x: 10, y: 5 },
+                fill: '#ffffff'
+            }).setScrollFactor(0);
         
-        palette_couleur = [[0xf2e2e2,0xf2e2e2,0xf2e2e2],[0xff00ff,0xcf22cf,0xcf33cf],[0xcf00ff,0x9f22cf,0x9f33cf],[0xaf00ff,0x7f22cf,0x7f33cf],[0x8f00ff,0x5f22cf,0x5f33cf],[0x00ff00,0x00ff00,0x00ff00],[0x30ff30,0x30ff30,0x30ff30],[0x60ff60,0x60ff60,0x60ff60],[0x90ff90,0x90ff90,0x90ff90],[0x000000,0x000000,0x000000]];
+        cursors = this.input.keyboard.addKeys({ 'pause': Phaser.Input.Keyboard.KeyCodes.SPACE, 'switch_color': Phaser.Input.Keyboard.KeyCodes.C, 'radius_up': Phaser.Input.Keyboard.KeyCodes.P, 'radius_down': Phaser.Input.Keyboard.KeyCodes.M, 'switch_mode_dessin': Phaser.Input.Keyboard.KeyCodes.B, 'trait_droit': Phaser.Input.Keyboard.KeyCodes.ALT, 'rotate_left': Phaser.Input.Keyboard.KeyCodes.LEFT, 'rotate_right': Phaser.Input.Keyboard.KeyCodes.RIGHT});
+        
+        palette_couleur = [[0xf2e2e2,0xf2e2e2,0xf2e2e2],[0xff00ff,0xcf22cf,0xcf33cf],[0xcf00ff,0x9f22cf,0x9f33cf],[0xaf00ff,0x7f22cf,0x7f33cf],[0x8f00ff,0x5f22cf,0x5f33cf],[0x00ff00,0x00df00,0x00cf00],[0x30ff30,0x30df30,0x30cf30],[0x60ff60,0x60df60,0x60cf60],[0x90ff90,0x90df90,0x90cf90],[0x000000,0x000000,0x000000],[0xfc20fc,0xfc20fc,0xfc20fc],[0xfa51fa,0xfa51fa,0xfa51fa],[0xf781e7,0xf781e7,0xf781e7],[0xf5b2e5,0xf5b2e5,0xf5b2e5]];
         
         for (let i = 0; i < num_l; i++)
         {
@@ -118,9 +131,10 @@ class scene1 extends Phaser.Scene{
         
         if (random_start)
         {
-            nb_trait = 9+Math.floor(5*Math.random());
+            nb_trait = (9+Math.floor(5*Math.random()))*(num_l*num_c)/10000;
             for (let n = 0; n < nb_trait; n++)
             {
+                /*
                 x_start = Math.floor(config.width*Math.random());
                 y_start = Math.floor(config.height*Math.random());
                 theta = 2*Math.PI*Math.random();
@@ -144,6 +158,32 @@ class scene1 extends Phaser.Scene{
                     d = 2+Math.floor((6*size_radius+1)*Math.random());
                     x_start += d*Math.cos(theta);
                     y_start += d*Math.sin(theta);
+                    theta += 2*Math.PI/8*Math.random()-Math.PI/8;
+                    if(p%3==0){size_radius = Math.min(Math.max(size_radius + Math.floor(3*Math.random())-1,0),4);}
+                }
+                */
+                size_radius = 1;
+                let i_n = Math.floor(num_l*Math.random());
+                let j_n = Math.floor(num_c*Math.random());
+                theta = 2*Math.PI*Math.random();
+                length_trait = (3+Math.floor(28*Math.random()))*(num_c*num_l)/10000;
+                for (let p = 0; p < length_trait; p++)
+                {
+                    for (let k = -size_radius; k <= size_radius; k++)
+                    {
+                        for (let l = -size_radius; l <= size_radius; l++)
+                        {
+                            if (Math.pow(Math.pow(k,2)+Math.pow(l,2),0.5) <= size_radius && 0<=i_n+k && i_n+k<num_l && 0<=j_n+l && j_n+l<num_c)
+                            {
+                                map[i_n+k][j_n+l] = color;
+                                map_aux[i_n+k][j_n+l]  = color;
+                                //draw(color,(j+l)*(size_c+angle_display)-angle_display*i,(i+k)*size_l,(size_c+angle_display),size_l);
+                            }
+                        }
+                    }
+                    d = (Math.floor((1*size_radius+1)*Math.random()))*(num_l*num_c)/10000;
+                    i_n += Math.round(d*Math.cos(theta));
+                    j_n += Math.round(d*Math.sin(theta));
                     theta += 2*Math.PI/8*Math.random()-Math.PI/8;
                     if(p%3==0){size_radius = Math.min(Math.max(size_radius + Math.floor(3*Math.random())-1,0),4);}
                 }
@@ -176,6 +216,7 @@ class scene1 extends Phaser.Scene{
             if (color == 1){color = 0;}
             else{color = 1;}
             switch_color_possible = false;
+            helpText.setText("M = taille brush moins grande \n P = taille brush plus grande \n B = mode brush "+mode_dessin+"\n C = couleur "+color*2-1);
         }
         if (cursors.switch_color.isDown){switch_color_possible = true;}
         
@@ -201,31 +242,46 @@ class scene1 extends Phaser.Scene{
         }
         if (cursors.radius_down.isDown){radius_down_possible = true;}
         
+        if (cursors.rotate_left.isUp && rotate_left_possible)
+        {
+            angle_display = Math.max(0,angle_display-1);
+            config.width = config.width;
+            rotate_left_possible = false;
+        }
+        if (cursors.rotate_left.isDown){rotate_left_possible = true;}
+        
+        if (cursors.rotate_right.isUp && rotate_right_possible)
+        {
+            angle_display = Math.min(40,angle_display+1);
+            rotate_right_possible = false;
+        }
+        if (cursors.rotate_right.isDown){rotate_right_possible = true;}
+        
         if (this.input.activePointer.isDown && 0<game.input.mousePointer.y<config.height && 0<game.input.mousePointer.x<config.width && ((reserve_mouse>0 && reserve_mouse2>0) || !mode_score))
         {
             let i = Math.floor((game.input.mousePointer.y-70)/size_l);
-            let j = Math.round((game.input.mousePointer.x-num_l*(angle_display+decalage_diag)-0.02*(num_c * (size_c+angle_display) + num_l * (angle_display+decalage_diag))+angle_display*i)/(size_c+angle_display));;
+            let j = Math.floor((game.input.mousePointer.x-70-num_l*(angle_display+decalage_diag)+(angle_display+decalage_diag)*i+(angle_display/size_l*(70+(i+1)*size_l-1-game.input.mousePointer.y)))/(size_c+angle_display));
             for (let k = -size_radius; k <= size_radius; k++)
             {
                 for (let l = -size_radius; l <= size_radius; l++)
                 {
                     if (Math.pow(Math.pow(k,2)+Math.pow(l,2),0.5) <= size_radius && 0<=i+k && i+k<num_l && 0<=j+l && j+l<num_c)
                     {
-                        if (map[i+k][j+l] == 0 || timing2%15 == 0)
+                        if (map[i+k][j+l] == 0 || timing2%1 == 0)
                         {
                             if (mode_dessin == 0)
                             {
                                 if (color == 1)
                                 {
-                                    map[i+k][j+l] = Math.min(map[i+k][j+l] + color,4);
-                                    map_aux[i+k][j+l]  += Math.min(map_aux[i+k][j+l] + color,4);
-                                    draw(map[i+k][j+l],i+k,j+l);
+                                    map[i+k][j+l] = Math.min(map[i+k][j+l] + 1,4);
+                                    map_aux[i+k][j+l]  = Math.min(map_aux[i+k][j+l] + 1,4);
+                                    //draw(map[i+k][j+l],i+k,j+l);
                                 }
                                 else
                                 {
-                                    map[i+k][j+l] = Math.max(map[i+k][j+l] - color,0);
-                                    map_aux[i+k][j+l]  = Math.max(map_aux[i+k][j+l] - color,0);
-                                    draw(map[i+k][j+l],i+k,j+l);
+                                    map[i+k][j+l] = Math.max(map[i+k][j+l] - 1,0);
+                                    map_aux[i+k][j+l]  = Math.max(map_aux[i+k][j+l] - 1,0);
+                                    //draw(map[i+k][j+l],i+k,j+l);
                                 }
                             }
                             else
@@ -233,13 +289,24 @@ class scene1 extends Phaser.Scene{
                                 {
                                     map[i+k][j+l] = color;
                                     map_aux[i+k][j+l]  = color;
-                                    draw(map[i+k][j+l],i+k,j+l);
+                                    //draw(map[i+k][j+l],i+k,j+l);
                                 }
                             }
                         }
                     }
                 }
             }
+            
+            graphics.clear();
+            for (let im = 0; im < num_l; im++)
+            {
+                for (let jm = 0; jm < num_c; jm++)
+                {
+                    draw(map[im][jm],im,jm);
+
+                }
+            }
+            
             if(mode_score)
             {
                 reserve_mouse--;
@@ -262,50 +329,11 @@ class scene1 extends Phaser.Scene{
         {
             if (timing == 0)
             {
-                clean();
+                graphics.clear();
                 for (let i = 0; i < num_l; i++)
                 {
                     for (let j = 0; j < num_c; j++)
                     {
-                        /*
-                        var compteur = 0;
-                        for (let k = -1; k < 2; k++)
-                        {
-                            for (let l = -1; l < 2; l++)
-                            {
-                                var dep_ik = i+k;
-                                var dep_jl = j+l;
-                                if (dep_ik > num_l-1){dep_ik = 0}
-                                else if (dep_ik < 0){dep_ik = num_l-1}
-                                if (dep_jl > num_c-1){dep_jl = 0}
-                                else if (dep_jl < 0){dep_jl = num_c-1}
-                                if ((k!=0 || l!=0) && map[dep_ik][dep_jl] == 1)
-                                {
-                                    compteur += 1;
-                                }
-                            }
-                        }
-                        if (compteur == 3)
-                        {
-                            map_aux[i][j] = 1;
-                            if (map[i][j] == 0)
-                            {
-                                graphics.fillStyle(0xff00ff, 1);
-                                if (size_c < lim_display_grid){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
-                                else {graphics.fillRect(j*size_c+1,i*size_l+1,size_c-2,size_l-2);}
-                            }
-                        }
-                        else if (compteur > 3 || compteur < 2)
-                        {
-                            map_aux[i][j] = 0;
-                            if (map[i][j] == 1)
-                            {
-                                graphics.fillStyle(0xffff00, 1);
-                                if (size_c < lim_display_grid){graphics.fillRect(j*size_c,i*size_l,size_c,size_l);}
-                                else {graphics.fillRect(j*size_c+1,i*size_l+1,size_c-2,size_l-2);}
-                            }
-                        }*/
-                        
                         //Comptage des voisins
                         let compteur1 = 0;
                         let compteur2 = 0;
@@ -336,77 +364,16 @@ class scene1 extends Phaser.Scene{
                         //Regles d'evolution
                         if (map[i][j] == 0)
                         {
-                            if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6)
-                            {
-                                map_aux[i][j] += 1;
-                            }
+
                         }
-                        else if (map[i][j] == 1)
-                        {
-                            
-                            if (compteur5 > 0)
-                            {
-                                map_aux[i][j] += 3;
-                            }
-                            else if (compteur1 > 5)
-                            {
-                                map_aux[i][j] += 1;
-                            }
-                            else if (compteur1 < 2)
-                            {
-                                map_aux[i][j] -= 1;
-                            }
-                        }
-                        else if (map[i][j] == 2)
-                        {
-                            if (compteur5 > 0)
-                            {
-                                map_aux[i][j] += 2;
-                            }
-                            else if (compteur1+compteur2 > 6)
-                            {
-                                map_aux[i][j] += 1;
-                            }
-                            else if (compteur1+compteur2 < 2)
-                            {
-                                map_aux[i][j] -= 1;
-                            }
-                        }
-                        else if (map[i][j] == 3)
-                        {
-                            if (compteur5 > 0)
-                            {
-                                map_aux[i][j] += 1;
-                            }
-                            else if (compteur1+compteur2+compteur3 > 7)
-                            {
-                                map_aux[i][j] += 1;
-                            }
-                            else if (compteur1+compteur2+compteur3 < 3)
-                            {
-                                map_aux[i][j] -= 1;
-                            }
-                        }
-                        else if (map[i][j] == 4)
-                        {
-                            if (compteur4 > 1)
-                            {
-                                map_aux[i][j] = 5;
-                            }
-                            else if (compteur3+compteur2 < 3)
-                            {
-                                map_aux[i][j] -= 1;
-                            }
-                        }
-                        else if ( 5 <= map[i][j] && map[i][j] < 8)
+                        else if (map[i][j] >= 1 && map[i][j] <= 30)
                         {
                             map_aux[i][j] += 1;
                         }
-                        else if (map[i][j] == 8)
+                        else if (map[i][j] == 31)
                         {
-                            map_aux[i][j] = 0;
+                            map_aux[i][j] = 1;
                         }
-                        
                         //Affichage si changement
                         //if (map[i][j] != map_aux[i][j]){draw(map_aux[i][j],j*(size_c+angle_display),i*size_l,(size_c+angle_display),size_l);}
                         draw(map_aux[i][j],i,j);
@@ -454,19 +421,6 @@ class scene1 extends Phaser.Scene{
             timing = (timing+1)%5;
         }
         timing2 = (timing2+1)%1000;
-        if (timing2%0 == 0)
-        {
-            for(let type in this.cache) {
-                console.log(type)
-
-                if (type != 'game') {
-                    for (let entry in this.cache[type]) {
-                        this.cache[type].remove(entry);
-                    }
-                }
-
-            }
-        }
     }
 }
 
@@ -505,29 +459,38 @@ function draw(color,i,j)
     let ind_color;
     
     if (color == 0)     {ind_color = 0; hauteur = 0;}
-    else if (color == 1){ind_color = 1; hauteur = 5;}
-    else if (color == 2){ind_color = 2; hauteur = 10;}
-    else if (color == 3){ind_color = 3; hauteur = 15;}
-    else if (color == 4){ind_color = 4; hauteur = 20;}
-    else if (color == 5){ind_color = 5; hauteur = 0;}
-    else if (color == 6){ind_color = 6; hauteur = -4;}
-    else if (color == 7){ind_color = 7; hauteur = -8;}
-    else if (color == 9){ind_color = 9; hauteur = 0;}
-    else if (color >= 8){ind_color = 8; hauteur = -12;}
+    else if (color == 1){ind_color = 1; hauteur = 2;}
+    else if (color == 2){ind_color = 2; hauteur = 4;}
+    else if (color == 3){ind_color = 3; hauteur = 6;}
+    else if (color == 4){ind_color = 4; hauteur = 8;}
+    else if (color == 5){ind_color = 3; hauteur = 7;}
+    else if (color == 6){ind_color = 2; hauteur = 6;}
+    else if (color == 7){ind_color = 1; hauteur = 5;}
+    else if (color == 8){ind_color = 10; hauteur = 4;}
+    else if (color == 9){ind_color = 11; hauteur = 3;}
+    else if (color == 10){ind_color = 12; hauteur = 2;}
+    else if (color == 11){ind_color = 13; hauteur = 1;}
+    else if (color >= 12){ind_color = 0; hauteur = 0;}
     else                {ind_color = 8; hauteur = -16;}
+    
+    hauteur = (hauteur<0)?0:hauteur;
     
     if (angle_display == 0){hauteur = 0;}
     y -= hauteur;
     
     if (size_c < lim_display_grid)
     {
-        if (hauteur >= 0){make_poly(x,y,lx,ly,hauteur,ind_color,0);}
-        else {make_poly(x,y,lx,ly,hauteur,ind_color,0);}
+        if (hauteur >= 0){make_poly(i,j,x,y,lx,ly,hauteur,ind_color,0);}
+        else {make_poly(i,j,x,y,lx,ly,hauteur,ind_color,0);}
     }
-    else {make_poly(x,y,lx,ly,hauteur,ind_color,1);}
+    else
+    {
+        if (hauteur >= 0){make_poly(i,j,x,y,lx,ly,hauteur,ind_color,1);}
+        else {make_poly(i,j,x,y,lx,ly,hauteur,ind_color,1);}
+    }
 }
 
-function make_poly(x,y,lx,ly,hauteur,ind_color,decalage)
+function make_poly(i,j,x,y,lx,ly,hauteur,ind_color,decalage)
 {
     graphics.lineStyle(5, 0xFF0FFF, 1.0);
     let poly = new Phaser.Geom.Polygon();
