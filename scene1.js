@@ -26,7 +26,7 @@ var reserve_mouse2 = 5;
 var mouse_possible = false;
 var radius_up_possible = false;
 var radius_down_possible = false;
-var mode_dessin = 0;
+var mode_dessin = 1;
 var switch_mode_dessin_possible = false;
 var rotate_left_possible = false;
 var rotate_right_possible = false;
@@ -58,12 +58,12 @@ const size_l = 4;
 const size_c = 4;
 
 const lim_display_grid = 13;
-var angle_display = 2;
+var angle_display = 0;
 
 var decalage_diag = angle_display?1:0;
 
 const mode_score = false;
-const random_start = false;//mode_score;
+const random_start = true;//mode_score;
 
 class scene1 extends Phaser.Scene{
     
@@ -132,7 +132,7 @@ class scene1 extends Phaser.Scene{
         
         if (random_start)
         {
-            nb_trait = (14+Math.floor(5*Math.random()))*(num_l*num_c)/10000;
+            nb_trait = (7+Math.floor(5*Math.random()))*(num_l*num_c)/10000;
             for (let n = 0; n < nb_trait; n++)
             {
                 /*
@@ -163,11 +163,11 @@ class scene1 extends Phaser.Scene{
                     if(p%3==0){size_radius = Math.min(Math.max(size_radius + Math.floor(3*Math.random())-1,0),4);}
                 }
                 */
-                size_radius = 10;
+                size_radius = 7;
                 let i_n = Math.floor(num_l*Math.random());
                 let j_n = Math.floor(num_c*Math.random());
                 theta = 2*Math.PI*Math.random();
-                length_trait = (18+Math.floor(28*Math.random()))*(num_c*num_l)/10000;
+                length_trait = (14+Math.floor(28*Math.random()))*(num_c*num_l)/10000;
                 for (let p = 0; p < length_trait; p++)
                 {
                     for (let k = -size_radius; k <= size_radius; k++)
@@ -307,14 +307,14 @@ class scene1 extends Phaser.Scene{
                             {
                                 if (color == 1)
                                 {
-                                    //map[i+k][j+l] += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
-                                    //map_aux[i+k][j+l]  += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
+                                    map[i+k][j+l] += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
+                                    map_aux[i+k][j+l]  += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
                                     
                                     //map[i+k][j+l] = Math.floor((size_radius*size_radius-Math.abs(k*l))/size_radius);
                                     //map_aux[i+k][j+l]  = Math.floor((size_radius*size_radius-Math.abs(k*l))/size_radius);
                                     
-                                    map[i+k][j+l] = color;
-                                    map_aux[i+k][j+l]  = color;
+                                    //map[i+k][j+l] = color;
+                                    //map_aux[i+k][j+l]  = color;
                                 }
                                 else
                                 {
@@ -394,76 +394,15 @@ class scene1 extends Phaser.Scene{
                         //Regles d'evolution
                         if (map[i][j] == 0)
                         {
-                            if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6 || compteur4+compteur5 == 4)
-                            //if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6)
-                            {
-                                map_aux[i][j] += 1;
-                            }
+                            if (compteur1 > 0){map_aux[i][j] += 1;}
                         }
-                        else if (map[i][j] == 1)
-                        {
-                            
-                            if (compteur5 > 0)
-                            {
-                                map_aux[i][j] += 3;
-                            }
-                            else if (compteur1 > 5)
-                            {
-                                map_aux[i][j] += 1;
-                            }
-                            else if (compteur1 < 2)
-                            {
-                                map_aux[i][j] -= 1;
-                            }
-                        }
-                        else if (map[i][j] == 2)
-                        {
-                            if (compteur5 > 0)
-                            {
-                                map_aux[i][j] += 2;
-                            }
-                            else if (compteur1+compteur2 > 6)
-                            {
-                                map_aux[i][j] += 1;
-                            }
-                            else if (compteur1+compteur2 < 2)
-                            {
-                                map_aux[i][j] -= 1;
-                            }
-                        }
-                        else if (map[i][j] == 3)
-                        {
-                            if (compteur5 > 0)
-                            {
-                                map_aux[i][j] += 1;
-                            }
-                            else if (compteur1+compteur2+compteur3 > 7)
-                            {
-                                map_aux[i][j] += 1;
-                            }
-                            else if (compteur1+compteur2+compteur3 < 3)
-                            {
-                                map_aux[i][j] -= 1;
-                            }
-                        }
-                        else if (map[i][j] == 4)
-                        {
-                            if (compteur4 > 1)
-                            {
-                                map_aux[i][j] = 5;
-                            }
-                            else if (compteur3+compteur2 < 3)
-                            {
-                                map_aux[i][j] -= 1;
-                            }
-                        }
-                        else if ( 5 <= map[i][j] && map[i][j] < 8)
+                        else if (map[i][j] >= 1 && map[i][j] <= 30)
                         {
                             map_aux[i][j] += 1;
                         }
-                        else if (map[i][j] == 8)
+                        else if (map[i][j] == 31)
                         {
-                            map_aux[i][j] = 0;
+                            map_aux[i][j] = 1;
                         }
                         //Affichage si changement
                         //if (map[i][j] != map_aux[i][j]){draw(map_aux[i][j],j*(size_c+angle_display),i*size_l,(size_c+angle_display),size_l);}
@@ -550,15 +489,22 @@ function draw(color,i,j)
     let ind_color;
     
     if (color == 0)     {ind_color = 0; hauteur = 0;}
-    else if (color == 1){ind_color = 1; hauteur = 5;}
-    else if (color == 2){ind_color = 2; hauteur = 7;}
-    else if (color == 3){ind_color = 3; hauteur = 9;}
-    else if (color == 4){ind_color = 4; hauteur = 11;}
-    else if (color == 5){ind_color = 5; hauteur = 12;}
-    else if (color == 6){ind_color = 6; hauteur = 11;}
-    else if (color == 7){ind_color = 7; hauteur = 7;}
-    else if (color == 9){ind_color = 9; hauteur = 0;}
-    else if (color >= 8){ind_color = 8; hauteur = 5;}
+    else if (color == 1){ind_color = 1; hauteur = 2;}
+    else if (color == 2){ind_color = 2; hauteur = 3;}
+    else if (color == 3){ind_color = 3; hauteur = 4;}
+    else if (color == 4){ind_color = 4; hauteur = 5;}
+    else if (color == 5){ind_color = 4; hauteur = 6;}
+    else if (color == 6){ind_color = 4; hauteur = 8;}
+    else if (color == 7){ind_color = 4; hauteur = 10;}
+    else if (color == 8){ind_color = 4; hauteur = 8;}
+    else if (color == 9){ind_color = 3; hauteur = 7;}
+    else if (color == 10){ind_color = 2; hauteur = 6;}
+    else if (color == 11){ind_color = 1; hauteur = 5;}
+    else if (color == 12){ind_color = 10; hauteur = 4;}
+    else if (color == 13){ind_color = 11; hauteur = 3;}
+    else if (color == 14){ind_color = 12; hauteur = 2;}
+    else if (color == 15){ind_color = 13; hauteur = 1;}
+    else if (color >= 16){ind_color = 0; hauteur = 0;}
     else                {ind_color = 8; hauteur = -16;}
     
     hauteur = (hauteur<0)?0:hauteur;
