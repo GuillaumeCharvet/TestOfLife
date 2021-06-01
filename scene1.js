@@ -18,7 +18,8 @@ var pause_possible = false;
 
 var color = 1;
 var switch_color_possible = false;
-var size_radius = 1;
+var size_radius_init = 1;
+var size_radius = size_radius_init;
 var reserve_mouse = 180;
 var reserve_mouse2 = 5;
 
@@ -57,12 +58,12 @@ const size_l = 4;
 const size_c = 4;
 
 const lim_display_grid = 13;
-var angle_display = 0;
+var angle_display = 2;
 
 var decalage_diag = angle_display?1:0;
 
 const mode_score = false;
-const random_start = true;//mode_score;
+const random_start = false;//mode_score;
 
 class scene1 extends Phaser.Scene{
     
@@ -108,7 +109,7 @@ class scene1 extends Phaser.Scene{
             }).setScrollFactor(0);
         }
         
-        helpText= this.add.text(10, config.height/2,"M = taille brush moins grande \n P = taille brush plus grande \n B = mode brush "+mode_dessin+"\n C = couleur "+color*2-1, {
+        helpText= this.add.text(300, config.height/2,"M = taille brush moins grande \n P = taille brush plus grande \n B = mode brush "+mode_dessin+"\n C = couleur "+color*2-1, {
                 fontSize: '18px',
                 padding: { x: 10, y: 5 },
                 fill: '#ffffff'
@@ -162,7 +163,7 @@ class scene1 extends Phaser.Scene{
                     if(p%3==0){size_radius = Math.min(Math.max(size_radius + Math.floor(3*Math.random())-1,0),4);}
                 }
                 */
-                size_radius = 15;
+                size_radius = 10;
                 let i_n = Math.floor(num_l*Math.random());
                 let j_n = Math.floor(num_c*Math.random());
                 theta = 2*Math.PI*Math.random();
@@ -200,7 +201,7 @@ class scene1 extends Phaser.Scene{
                 draw(map[i][j],i,j);
             }
         }
-        size_radius = 1;
+        size_radius = size_radius_init;
     }
     
     update ()
@@ -306,19 +307,19 @@ class scene1 extends Phaser.Scene{
                             {
                                 if (color == 1)
                                 {
-                                    map[i+k][j+l] += Math.floor(size_radius-Math.pow(k*k+l*l,1/2));
-                                    map_aux[i+k][j+l]  += Math.floor(size_radius-Math.pow(k*k+l*l,1/2));
+                                    //map[i+k][j+l] += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
+                                    //map_aux[i+k][j+l]  += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
                                     
                                     //map[i+k][j+l] = Math.floor((size_radius*size_radius-Math.abs(k*l))/size_radius);
                                     //map_aux[i+k][j+l]  = Math.floor((size_radius*size_radius-Math.abs(k*l))/size_radius);
                                     
-                                    //map[i+k][j+l] = color;
-                                    //map_aux[i+k][j+l]  = color;
+                                    map[i+k][j+l] = color;
+                                    map_aux[i+k][j+l]  = color;
                                 }
                                 else
                                 {
-                                    map[i+k][j+l] -= Math.floor(size_radius-Math.pow(k*k+l*l,1/2));
-                                    map_aux[i+k][j+l]  -= Math.floor(size_radius-Math.pow(k*k+l*l,1/2));
+                                    map[i+k][j+l] = Math.max(0,map[i+k][j+l]-Math.floor(size_radius-Math.pow(k*k+l*l,1/2)));
+                                    map_aux[i+k][j+l]  = Math.max(0,map_aux[i+k][j+l]-Math.floor(size_radius-Math.pow(k*k+l*l,1/2)));
                                 }
                             }
                         }
@@ -393,15 +394,76 @@ class scene1 extends Phaser.Scene{
                         //Regles d'evolution
                         if (map[i][j] == 0)
                         {
-
+                            if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6 || compteur4+compteur5 == 4)
+                            //if (compteur1 == 3 || compteur1+compteur2+compteur3 > 6)
+                            {
+                                map_aux[i][j] += 1;
+                            }
                         }
-                        else if (map[i][j] >= 1 && map[i][j] <= 30)
+                        else if (map[i][j] == 1)
+                        {
+                            
+                            if (compteur5 > 0)
+                            {
+                                map_aux[i][j] += 3;
+                            }
+                            else if (compteur1 > 5)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1 < 2)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 2)
+                        {
+                            if (compteur5 > 0)
+                            {
+                                map_aux[i][j] += 2;
+                            }
+                            else if (compteur1+compteur2 > 6)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2 < 2)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 3)
+                        {
+                            if (compteur5 > 0)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2+compteur3 > 7)
+                            {
+                                map_aux[i][j] += 1;
+                            }
+                            else if (compteur1+compteur2+compteur3 < 3)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if (map[i][j] == 4)
+                        {
+                            if (compteur4 > 1)
+                            {
+                                map_aux[i][j] = 5;
+                            }
+                            else if (compteur3+compteur2 < 3)
+                            {
+                                map_aux[i][j] -= 1;
+                            }
+                        }
+                        else if ( 5 <= map[i][j] && map[i][j] < 8)
                         {
                             map_aux[i][j] += 1;
                         }
-                        else if (map[i][j] == 31)
+                        else if (map[i][j] == 8)
                         {
-                            map_aux[i][j] = 1;
+                            map_aux[i][j] = 0;
                         }
                         //Affichage si changement
                         //if (map[i][j] != map_aux[i][j]){draw(map_aux[i][j],j*(size_c+angle_display),i*size_l,(size_c+angle_display),size_l);}
@@ -488,25 +550,18 @@ function draw(color,i,j)
     let ind_color;
     
     if (color == 0)     {ind_color = 0; hauteur = 0;}
-    else if (color == 1){ind_color = 1; hauteur = 2;}
-    else if (color == 2){ind_color = 2; hauteur = 3;}
-    else if (color == 3){ind_color = 3; hauteur = 4;}
-    else if (color == 4){ind_color = 4; hauteur = 5;}
-    else if (color == 5){ind_color = 4; hauteur = 6;}
-    else if (color == 6){ind_color = 4; hauteur = 8;}
-    else if (color == 7){ind_color = 4; hauteur = 10;}
-    else if (color == 8){ind_color = 4; hauteur = 8;}
-    else if (color == 9){ind_color = 3; hauteur = 7;}
-    else if (color == 10){ind_color = 2; hauteur = 6;}
-    else if (color == 11){ind_color = 1; hauteur = 5;}
-    else if (color == 12){ind_color = 10; hauteur = 4;}
-    else if (color == 13){ind_color = 11; hauteur = 3;}
-    else if (color == 14){ind_color = 12; hauteur = 2;}
-    else if (color == 15){ind_color = 13; hauteur = 1;}
-    else if (color >= 16){ind_color = 0; hauteur = 0;}
+    else if (color == 1){ind_color = 1; hauteur = 5;}
+    else if (color == 2){ind_color = 2; hauteur = 7;}
+    else if (color == 3){ind_color = 3; hauteur = 9;}
+    else if (color == 4){ind_color = 4; hauteur = 11;}
+    else if (color == 5){ind_color = 5; hauteur = 12;}
+    else if (color == 6){ind_color = 6; hauteur = 11;}
+    else if (color == 7){ind_color = 7; hauteur = 7;}
+    else if (color == 9){ind_color = 9; hauteur = 0;}
+    else if (color >= 8){ind_color = 8; hauteur = 5;}
     else                {ind_color = 8; hauteur = -16;}
     
-    hauteur = (hauteur<0)?0:4*hauteur;
+    hauteur = (hauteur<0)?0:hauteur;
     
     if (angle_display == 0){hauteur = 0;}
     y -= hauteur;
