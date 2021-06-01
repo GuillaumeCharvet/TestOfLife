@@ -63,7 +63,7 @@ var angle_display = 0;
 var decalage_diag = angle_display?1:0;
 
 const mode_score = false;
-const random_start = true;//mode_score;
+const random_start = false;//mode_score;
 
 class scene1 extends Phaser.Scene{
     
@@ -307,11 +307,11 @@ class scene1 extends Phaser.Scene{
                             {
                                 if (color == 1)
                                 {
-                                    map[i+k][j+l] += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
-                                    map_aux[i+k][j+l]  += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
+                                    //map[i+k][j+l] += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
+                                    //map_aux[i+k][j+l]  += Math.floor(size_radius-Math.pow(k*k+l*l,1/2))%32;
                                     
-                                    //map[i+k][j+l] = Math.floor((size_radius*size_radius-Math.abs(k*l))/size_radius);
-                                    //map_aux[i+k][j+l]  = Math.floor((size_radius*size_radius-Math.abs(k*l))/size_radius);
+                                    map[i+k][j+l] = Math.floor((size_radius*size_radius-Math.abs(k*l))/size_radius);
+                                    map_aux[i+k][j+l]  = Math.floor((size_radius*size_radius-Math.abs(k*l))/size_radius);
                                     
                                     //map[i+k][j+l] = color;
                                     //map_aux[i+k][j+l]  = color;
@@ -507,7 +507,7 @@ function draw(color,i,j)
     else if (color >= 16){ind_color = 0; hauteur = 0;}
     else                {ind_color = 8; hauteur = -16;}
     
-    hauteur = (hauteur<0)?0:hauteur;
+    hauteur = (hauteur<0)?0:6*hauteur;
     
     if (angle_display == 0){hauteur = 0;}
     y -= hauteur;
