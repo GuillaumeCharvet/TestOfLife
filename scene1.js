@@ -52,10 +52,10 @@ var d;
 
 /************** PARAMETRES MODIFIABLES **************/
 
-const num_l = 100;
-const num_c = 100;
-const size_l = 4;
-const size_c = 4;
+const num_l = 150;
+const num_c = 150;
+const size_l = 5;
+const size_c = 5;
 
 const lim_display_grid = 13;
 var angle_display = 0;
